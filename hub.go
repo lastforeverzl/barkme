@@ -13,15 +13,17 @@ type Hub struct {
 	register   chan *Session
 	unregister chan *Session
 	rwmutex    *sync.RWMutex
+	env        *Env
 }
 
-func newHub() *Hub {
+func newHub(env *Env) *Hub {
 	return &Hub{
 		sessions:   make(map[*Session]bool),
 		broadcast:  make(chan Envelope),
 		register:   make(chan *Session),
 		unregister: make(chan *Session),
 		rwmutex:    &sync.RWMutex{},
+		env:        env,
 	}
 }
 
@@ -44,6 +46,7 @@ func (h *Hub) run() {
 		case message := <-h.broadcast:
 			h.rwmutex.RLock()
 			log.Printf("sessions sum: %v", len(h.sessions))
+			go h.env.db.UpdateUserAction(message)
 			for session := range h.sessions {
 				if session.device != message.Username {
 					session.writeMessage(message)

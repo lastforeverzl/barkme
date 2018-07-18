@@ -116,7 +116,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func wsHandler(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	log.Printf("Sec-Websocket-Key: %v", r.Header.Get("Sec-Websocket-Key"))
+	log.Printf("device: %v", r.URL.Query().Get("device"))
 	conn, err := upgrader.Upgrade(w, r, w.Header())
 	if err != nil {
 		log.Printf("upgrader.Upgrade error: %v", err)
@@ -128,7 +128,7 @@ func wsHandler(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		open:    true,
 		rwmutex: &sync.RWMutex{},
 		hub:     hub,
-		device:  r.Header.Get("Sec-Websocket-Key"), // TODO: change to device username or id
+		device:  r.URL.Query().Get("device"),
 	}
 	hub.register <- session
 	go session.readPump()

@@ -1,0 +1,7 @@
+{
+    "Host": "barkmedbinstance.cu7cojdfdvyd.us-west-1.rds.amazonaws.com",
+	"Port": "5432",
+	"User": "kipper",
+	"Password": "ZHANG1129324lei",
+	"Database": "BarkMeDb"
+}
