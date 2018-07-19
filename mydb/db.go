@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/lastforeverzl/barkme/message"
 )
 
 type Datastore interface {
@@ -15,7 +16,7 @@ type Datastore interface {
 	UpdateUser(chan *UserChan, string, User)
 	AddFavUser(chan *UserChan, string, User)
 	RemoveFavUser(chan *UserChan, string, User)
-	UpdateUserAction()
+	UpdateUserAction(message.Envelope)
 }
 
 type DB struct {

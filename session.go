@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/lastforeverzl/barkme/message"
 )
 
 const (
@@ -26,14 +27,14 @@ const (
 // Session wrapper around websocket connections.
 type Session struct {
 	conn    *websocket.Conn
-	output  chan Envelope
+	output  chan message.Envelope
 	open    bool
 	rwmutex *sync.RWMutex
 	hub     *Hub
 	device  string
 }
 
-func (s *Session) writeMessage(msg Envelope) {
+func (s *Session) writeMessage(msg message.Envelope) {
 	if s.closed() {
 		log.Printf("error: tried to write to closed a session")
 		return
@@ -65,7 +66,7 @@ func (s *Session) readPump() {
 	})
 	for {
 		// _, message, err := s.conn.ReadMessage()
-		var envelope Envelope
+		var envelope message.Envelope
 		err := s.conn.ReadJSON(&envelope)
 		log.Printf("envelope: %v", envelope)
 		if err != nil {
@@ -124,7 +125,7 @@ func wsHandler(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	session := &Session{
 		conn:    conn,
-		output:  make(chan Envelope, 256),
+		output:  make(chan message.Envelope, 256),
 		open:    true,
 		rwmutex: &sync.RWMutex{},
 		hub:     hub,

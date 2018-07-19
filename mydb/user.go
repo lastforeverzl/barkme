@@ -3,6 +3,8 @@ package mydb
 import (
 	"fmt"
 
+	"github.com/lastforeverzl/barkme/message"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -86,4 +88,15 @@ func (db *DB) RemoveFavUser(c chan *UserChan, id string, rmFavUser User) {
 func (user *User) AfterCreate(tx *gorm.DB) (err error) {
 	tx.Model(user).Update("DeviceName", fmt.Sprintf("#%d", user.ID))
 	return
+}
+
+func (db *DB) UpdateUserAction(msg message.Envelope) {
+	user := User{}
+	db.Where("id = ?", msg.ID).First(&user)
+	switch msg.Msg {
+	case "barks":
+		user.Barks++
+	}
+	db.Save(&user)
+	fmt.Println(user)
 }

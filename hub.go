@@ -3,13 +3,15 @@ package main
 import (
 	"log"
 	"sync"
+
+	"github.com/lastforeverzl/barkme/message"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the
 // sessions.
 type Hub struct {
 	sessions   map[*Session]bool
-	broadcast  chan Envelope
+	broadcast  chan message.Envelope
 	register   chan *Session
 	unregister chan *Session
 	rwmutex    *sync.RWMutex
@@ -19,7 +21,7 @@ type Hub struct {
 func newHub(env *Env) *Hub {
 	return &Hub{
 		sessions:   make(map[*Session]bool),
-		broadcast:  make(chan Envelope),
+		broadcast:  make(chan message.Envelope),
 		register:   make(chan *Session),
 		unregister: make(chan *Session),
 		rwmutex:    &sync.RWMutex{},
